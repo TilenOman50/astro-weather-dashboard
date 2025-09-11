@@ -7,6 +7,35 @@ export const ConditionSchema = z.object({
   code: z.number(),
 });
 
+// Hourly forecast
+export const HourSchema = z.object({
+  time_epoch: z.number(),
+  time: z.string(),
+  temp_c: z.number(),
+  temp_f: z.number(),
+  is_day: z.number(),
+  condition: ConditionSchema,
+  wind_mph: z.number(),
+  wind_kph: z.number(),
+  wind_degree: z.number(),
+  wind_dir: z.string(),
+  pressure_mb: z.number(),
+  pressure_in: z.number(),
+  precip_mm: z.number(),
+  precip_in: z.number(),
+  humidity: z.number(),
+  cloud: z.number(),
+  feelslike_c: z.number(),
+  feelslike_f: z.number(),
+  vis_km: z.number(),
+  vis_miles: z.number(),
+  uv: z.number(),
+  gust_mph: z.number(),
+  gust_kph: z.number(),
+  dewpoint_c: z.number(),
+  dewpoint_f: z.number(),
+});
+
 // Current weather
 export const CurrentWeatherSchema = z.object({
   last_updated_epoch: z.number(),
@@ -36,6 +65,7 @@ export const CurrentWeatherSchema = z.object({
   dewpoint_f: z.number(),
 });
 
+// Location
 export const LocationSchema = z.object({
   name: z.string(),
   region: z.string(),
@@ -47,6 +77,7 @@ export const LocationSchema = z.object({
   localtime: z.string(),
 });
 
+// Day forecast with hourly data
 export const DayForecastSchema = z.object({
   date: z.string(),
   date_epoch: z.number(),
@@ -75,8 +106,10 @@ export const DayForecastSchema = z.object({
     moon_phase: z.string(),
     moon_illumination: z.string(),
   }),
+  hour: z.array(HourSchema), // ✅ include hourly
 });
 
+// Forecast weather response
 export const ForecastWeatherSchema = z.object({
   location: LocationSchema,
   current: CurrentWeatherSchema,
@@ -85,6 +118,7 @@ export const ForecastWeatherSchema = z.object({
   }),
 });
 
+// Current weather response
 export const CurrentWeatherResponseSchema = z.object({
   location: LocationSchema,
   current: CurrentWeatherSchema,
@@ -94,4 +128,8 @@ export const CurrentWeatherResponseSchema = z.object({
 export type CurrentWeatherResponse = z.infer<
   typeof CurrentWeatherResponseSchema
 >;
-export type ForecastWeather = z.infer<typeof ForecastWeatherSchema>;
+export type ForecastWeatherResponse = z.infer<typeof ForecastWeatherSchema>;
+
+export type Hour = z.infer<typeof HourSchema>;
+export type DayForecast = z.infer<typeof DayForecastSchema>;
+export type Location = z.infer<typeof LocationSchema>;
