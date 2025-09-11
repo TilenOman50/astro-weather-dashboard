@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import WeatherCard from "./WeatherCard";
+import WeatherCard from "./components/WeatherCard";
+import Radar from "./components/Radar";
+import Clock from "./components/Clock";
 import type { ForecastWeatherResponse } from "@shared/schemas/weather";
 import { fetchForecast } from "./utils/api";
 
@@ -15,14 +17,18 @@ export default function App() {
     fetchForecast(lat, lon).then(setForecast).catch(console.error);
   }, []);
 
-  if (!forecast) return <p>Loading...</p>;
+  if (!forecast) return <p style={{ color: "#ffffff" }}>Loading...</p>;
 
   const today = forecast.forecast.forecastday[0];
 
   return (
     <div className="container">
       <h1>Weather Dashboard</h1>
-      <WeatherCard today={today} location={forecast.location} />
+      <Clock />
+      <div className="dashboard-grid">
+        <WeatherCard today={today} location={forecast.location} />
+        <Radar />
+      </div>
     </div>
   );
 }
