@@ -104,9 +104,9 @@ export const DayForecastSchema = z.object({
     moonrise: z.string(),
     moonset: z.string(),
     moon_phase: z.string(),
-    moon_illumination: z.string(),
+    moon_illumination: z.preprocess((val) => String(val), z.string()), // ✅ fix
   }),
-  hour: z.array(HourSchema), // ✅ include hourly
+  hour: z.array(HourSchema),
 });
 
 // Forecast weather response
