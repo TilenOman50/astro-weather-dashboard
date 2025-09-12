@@ -8,13 +8,14 @@ import { fetchForecast } from "./utils/api";
 
 const lat = 45.956;
 const lon = 14.659;
-const REFRESH_INTERVAL = 2 * 60; // 2 minutes in seconds
+const REFRESH_INTERVAL = 3 * 60; // 3 minutes in seconds
 
 export default function App() {
   const [forecast, setForecast] = useState<ForecastWeatherResponse | null>(
     null
   );
   const [secondsLeft, setSecondsLeft] = useState(REFRESH_INTERVAL);
+  const [clearOutsideKey, setClearOutsideKey] = useState(Date.now());
 
   useEffect(() => {
     // Fetch immediately on mount
@@ -24,6 +25,9 @@ export default function App() {
     const refreshInterval = setInterval(() => {
       fetchForecast(lat, lon).then(setForecast).catch(console.error);
       setSecondsLeft(REFRESH_INTERVAL); // reset countdown
+
+      // Refresh ClearOutside iframe
+      setClearOutsideKey(Date.now());
     }, REFRESH_INTERVAL * 1000);
 
     return () => clearInterval(refreshInterval);
@@ -48,7 +52,8 @@ export default function App() {
       <div className="dashboard-grid">
         <WeatherCard forecast={forecast} secondsLeft={secondsLeft} />
         <Radar />
-        <ClearOutside lat={lat} lon={lon} height={800} />
+        {/* Key forces iframe to reload */}
+        <ClearOutside key={clearOutsideKey} lat={lat} lon={lon} height={800} />
       </div>
     </div>
   );
