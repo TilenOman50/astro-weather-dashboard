@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import WeatherCard from "./components/WeatherCard";
 import Radar from "./components/Radar";
+import ClearOutside from "./components/ClearOutside";
 import Clock from "./components/Clock";
 import type { ForecastWeatherResponse } from "@shared/schemas/weather";
 import { fetchForecast } from "./utils/api";
@@ -25,9 +26,9 @@ export default function App() {
       <h1>Weather Dashboard</h1>
       <Clock />
       <div className="dashboard-grid">
-        {/* Pass the full forecast object */}
         <WeatherCard forecast={forecast} />
         <Radar />
+        <ClearOutside lat={lat} lon={lon} height={800} />
       </div>
     </div>
   );
