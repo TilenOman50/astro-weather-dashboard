@@ -1,3 +1,4 @@
+/* Global Styles */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -22,6 +23,7 @@ h1 {
   margin-bottom: 20px;
 }
 
+/* Dashboard grid */
 .dashboard-grid {
   display: flex;
   gap: 20px;
@@ -32,14 +34,79 @@ h1 {
 /* Weather Card */
 .weather-card {
   background: #2b2b2b;
-  padding: 20px;
+  padding: 15px; /* slightly smaller padding */
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   flex: 1 1 400px;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+/* Current weather items tighter spacing */
+.weather-card p {
+  margin: 3px 0; /* smaller vertical gap */
+}
+
+/* Next 10 Hours Scroll Section */
+.hours-scroll {
+  display: flex;
+  flex-direction: column; /* vertical scroll */
+  gap: 6px; /* tighter vertical spacing between hours */
+  max-height: 400px; /* scrollable area */
+  overflow-y: auto;
+  padding-right: 10px; /* avoid scrollbar overlap */
+  margin-top: 10px;
+}
+
+.hour-card {
+  background: #3a3a3a;
+  padding: 10px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px; /* tighter spacing */
+  font-size: 0.9rem;
+}
+
+/* Hour Labels */
+.hour-card p:first-child {
+  font-weight: bold;
+  font-size: 1rem;
 }
 
 /* Radar iframe */
 .radar-iframe {
-  flex: 2 1 600px; /* take more space than card */
-  height: 800px; /* bigger height */
+  flex: 2 1 600px; /* bigger than weather card */
+  height: 900px;
   border: none; /* remove border/rounded corners */
+  background: #1a1a1a;
+}
+
+/* Scrollbar styling (optional, for dark theme) */
+.hours-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.hours-scroll::-webkit-scrollbar-track {
+  background: #2b2b2b;
+  border-radius: 4px;
+}
+
+.hours-scroll::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .dashboard-grid {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .radar-iframe {
+    height: 600px;
+  }
 }

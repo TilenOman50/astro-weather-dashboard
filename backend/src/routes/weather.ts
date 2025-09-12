@@ -3,6 +3,8 @@ import axios from "axios";
 import {
   CurrentWeatherResponseSchema,
   ForecastWeatherSchema,
+  DayForecastSchema,
+  ForecastWeatherResponse,
 } from "@shared/schemas/weather";
 
 const router = Router();
@@ -28,7 +30,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Forecast
+// Forecast (next 10 hours across days)
 router.get("/forecast", async (req, res) => {
   const { lat, lon, days } = req.query;
 
@@ -44,7 +46,41 @@ router.get("/forecast", async (req, res) => {
     );
 
     const parsed = ForecastWeatherSchema.parse(response.data);
-    res.json(parsed);
+    const now = new Date();
+    let remainingHours = 10;
+    const filteredForecastDays: typeof parsed.forecast.forecastday = [];
+
+    for (const day of parsed.forecast.forecastday) {
+      const nextHours = day.hour.filter((h) => {
+        const hourTime = new Date(h.time);
+        return hourTime.getTime() >= now.getTime();
+      });
+
+      if (nextHours.length === 0) continue;
+
+      if (nextHours.length > remainingHours) {
+        filteredForecastDays.push({
+          ...day,
+          hour: nextHours.slice(0, remainingHours),
+        });
+        break;
+      } else {
+        filteredForecastDays.push({
+          ...day,
+          hour: nextHours,
+        });
+        remainingHours -= nextHours.length;
+      }
+    }
+
+    const filteredForecast: ForecastWeatherResponse = {
+      ...parsed,
+      forecast: {
+        forecastday: filteredForecastDays,
+      },
+    };
+
+    res.json(filteredForecast);
   } catch (error: any) {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch forecast data" });

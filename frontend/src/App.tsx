@@ -17,16 +17,16 @@ export default function App() {
     fetchForecast(lat, lon).then(setForecast).catch(console.error);
   }, []);
 
-  if (!forecast) return <p style={{ color: "#ffffff" }}>Loading...</p>;
-
-  const today = forecast.forecast.forecastday[0];
+  if (!forecast)
+    return <p style={{ color: "#ffffff", textAlign: "center" }}>Loading...</p>;
 
   return (
     <div className="container">
       <h1>Weather Dashboard</h1>
       <Clock />
       <div className="dashboard-grid">
-        <WeatherCard today={today} location={forecast.location} />
+        {/* Pass the full forecast object */}
+        <WeatherCard forecast={forecast} />
         <Radar />
       </div>
     </div>
