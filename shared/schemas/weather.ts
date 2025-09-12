@@ -34,6 +34,8 @@ export const HourSchema = z.object({
   gust_kph: z.number(),
   dewpoint_c: z.number(),
   dewpoint_f: z.number(),
+  chance_of_rain: z.number().optional(), // ✅ new
+  chance_of_snow: z.number().optional(), // ✅ new
 });
 
 // Current weather
@@ -63,6 +65,8 @@ export const CurrentWeatherSchema = z.object({
   gust_kph: z.number(),
   dewpoint_c: z.number(),
   dewpoint_f: z.number(),
+  chance_of_rain: z.number().optional(), // ✅ new
+  chance_of_snow: z.number().optional(), // ✅ new
 });
 
 // Location
@@ -97,6 +101,8 @@ export const DayForecastSchema = z.object({
     avghumidity: z.number(),
     condition: ConditionSchema,
     uv: z.number(),
+    daily_chance_of_rain: z.number().optional(), // ✅ new
+    daily_chance_of_snow: z.number().optional(), // ✅ new
   }),
   astro: z.object({
     sunrise: z.string(),
@@ -104,7 +110,7 @@ export const DayForecastSchema = z.object({
     moonrise: z.string(),
     moonset: z.string(),
     moon_phase: z.string(),
-    moon_illumination: z.preprocess((val) => String(val), z.string()), // ✅ fix
+    moon_illumination: z.preprocess((val) => String(val), z.string()),
   }),
   hour: z.array(HourSchema),
 });

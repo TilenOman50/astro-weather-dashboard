@@ -34,12 +34,12 @@ h1 {
 /* Weather Card */
 .weather-card {
   background: #2b2b2b;
-  padding: 15px; /* slightly smaller padding */
+  padding: 15px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   flex: 1 1 400px;
   display: flex;
   flex-direction: column;
-  max-height: 90vh;
+  height: 870px; /* fixed height */
   overflow: hidden;
   border-radius: 8px;
 }
@@ -52,9 +52,9 @@ h1 {
 /* Next 10 Hours Scroll Section */
 .hours-scroll {
   display: flex;
-  flex-direction: column; /* vertical scroll */
-  gap: 6px; /* tighter vertical spacing between hours */
-  max-height: 400px; /* scrollable area */
+  flex-direction: column;
+  gap: 6px;
+  flex: 1; /* take up all remaining space */
   overflow-y: auto;
   padding-right: 10px; /* avoid scrollbar overlap */
   margin-top: 10px;
@@ -78,9 +78,9 @@ h1 {
 
 /* Radar iframe */
 .radar-iframe {
-  flex: 2 1 600px; /* bigger than weather card */
-  height: 900px;
-  border: none; /* remove border/rounded corners */
+  flex: 2 1 600px;
+  height: 900px; /* match weather card */
+  border: none;
   background: #1a1a1a;
 }
 
