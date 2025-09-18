@@ -15,19 +15,14 @@ export default function App() {
     null
   );
   const [secondsLeft, setSecondsLeft] = useState(REFRESH_INTERVAL);
-  const [clearOutsideKey, setClearOutsideKey] = useState(Date.now());
 
   useEffect(() => {
     // Fetch immediately on mount
     fetchForecast(lat, lon).then(setForecast).catch(console.error);
 
-    // Refresh interval
+    // Refresh interval - reload the entire page
     const refreshInterval = setInterval(() => {
-      fetchForecast(lat, lon).then(setForecast).catch(console.error);
-      setSecondsLeft(REFRESH_INTERVAL); // reset countdown
-
-      // Refresh ClearOutside iframe
-      setClearOutsideKey(Date.now());
+      window.location.reload();
     }, REFRESH_INTERVAL * 1000);
 
     return () => clearInterval(refreshInterval);
@@ -53,7 +48,7 @@ export default function App() {
         <WeatherCard forecast={forecast} secondsLeft={secondsLeft} />
         <Radar />
         {/* Key forces iframe to reload */}
-        <ClearOutside key={clearOutsideKey} lat={lat} lon={lon} height={800} />
+        <ClearOutside lat={lat} lon={lon} height={800} />
       </div>
     </div>
   );
