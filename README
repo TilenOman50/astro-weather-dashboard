@@ -1,0 +1,269 @@
+# Astro Weather Dashboard
+
+A real-time weather dashboard built with React frontend and Node.js/Express backend, designed to run in Docker containers.
+
+## Features
+
+- 🌤️ Real-time weather forecasts
+- 🕐 Live clock with countdown timer
+- 📡 Weather radar integration
+- 🌙 ClearOutside astronomy data
+- 🔄 Auto-refresh every 3 minutes
+- 🐳 Docker containerized deployment
+
+## Tech Stack
+
+- **Frontend**: React + TypeScript + Vite
+- **Backend**: Node.js + Express + TypeScript
+- **Package Manager**: pnpm
+- **Containerization**: Docker
+- **Weather API**: WeatherAPI.com
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 20+
+- pnpm
+- Docker
+- WeatherAPI.com API key
+
+### Local Development
+
+1. **Install dependencies**:
+
+   ```bash
+   pnpm install
+   ```
+
+2. **Set up environment variables**:
+
+   ```bash
+   # Backend
+   echo "WEATHER_API_KEY=your_api_key_here" > backend/.env
+   ```
+
+3. **Start development servers**:
+
+   ```bash
+   # Terminal 1 - Backend
+   cd backend && pnpm run dev
+
+   # Terminal 2 - Frontend
+   cd frontend && pnpm run dev
+   ```
+
+4. **Access the app**: http://localhost:5173
+
+### Docker Deployment
+
+#### Build and Run Locally
+
+1. **Build frontend**:
+
+   ```bash
+   cd frontend && pnpm run build
+   ```
+
+2. **Build Docker image**:
+
+   ```bash
+   docker buildx build --platform linux/amd64 -t astro-weather-app:amd64 .
+   ```
+
+3. **Run container**:
+
+   ```bash
+   docker run --rm -p 4000:4000 -e WEATHER_API_KEY=your_api_key astro-weather-app:amd64
+   ```
+
+4. **Access the app**: http://localhost:4000
+
+#### Deploy to TrueNAS
+
+1. **Create and save Docker image on PC**:
+
+   ```bash
+   docker buildx build --platform linux/amd64 -t astro-weather-app:amd64 .
+   docker save -o astro-weather-app-amd64.tar astro-weather-app:amd64
+   ```
+
+2. **Clean up old containers and images on TrueNAS**:
+
+   ```bash
+   # Open TrueNAS terminal (web interface > Shell)
+
+   # Check all containers
+   sudo docker ps -a
+
+   # Stop and remove old container
+   docker stop astro-weather-app
+   docker rm astro-weather-app
+
+   # Check all images
+   docker images
+
+   # Remove old image
+   docker rmi astro-weather-app:amd64
+
+   # Remove old tar file
+   rm /mnt/Main/applications/astro-weather-app/astro-weather-app-amd64.tar
+   ```
+
+3. **Transfer new image to TrueNAS**:
+
+   - Drag and drop `astro-weather-app-amd64.tar` to your TrueNAS dataset
+   - Move file to applications folder in TrueNAS shell:
+
+   ```bash
+   mv /mnt/Main/your-dataset/astro-weather-app-amd64.tar /mnt/Main/applications/astro-weather-app/
+   ```
+
+4. **Load image and create container on TrueNAS**:
+
+   ```bash
+   # Load the new image
+   docker load -i /mnt/Main/applications/astro-weather-app/astro-weather-app-amd64.tar
+
+   # Create and run container with auto-restart
+   docker run -d \
+     --name astro-weather-app \
+     --restart unless-stopped \
+     -p 4000:4000 \
+     -e WEATHER_API_KEY=your_api_key \
+     astro-weather-app:amd64
+   ```
+
+5. **Access via Tailscale**: http://your-truenas-tailscale-ip:4000
+
+## Updating and Redeploying
+
+### When Making Code Changes
+
+1. **Make your changes** to the codebase
+
+2. **Rebuild frontend** (if frontend changes):
+
+   ```bash
+   cd frontend && pnpm run build
+   ```
+
+3. **Rebuild Docker image**:
+
+   ```bash
+   docker buildx build --platform linux/amd64 -t astro-weather-app:amd64 .
+   ```
+
+4. **Update on TrueNAS**:
+
+   ```bash
+   # Create and save new image
+   docker save -o astro-weather-app-amd64.tar astro-weather-app:amd64
+   ```
+
+5. **Clean up and deploy on TrueNAS**:
+
+   ```bash
+   # Open TrueNAS terminal (web interface > Shell)
+
+   # Check all containers
+   sudo docker ps -a
+
+   # Stop and remove old container
+   docker stop astro-weather-app
+   docker rm astro-weather-app
+
+   # Remove old image
+   docker rmi astro-weather-app:amd64
+
+   # Remove old tar file
+   rm /mnt/Main/applications/astro-weather-app/astro-weather-app-amd64.tar
+   ```
+
+6. **Transfer and run new image**:
+
+   - Drag and drop new `astro-weather-app-amd64.tar` to TrueNAS dataset
+   - Move to applications folder:
+
+   ```bash
+   mv /mnt/Main/your-dataset/astro-weather-app-amd64.tar /mnt/Main/applications/astro-weather-app/
+   ```
+
+   - Load and run:
+
+   ```bash
+   docker load -i /mnt/Main/applications/astro-weather-app/astro-weather-app-amd64.tar
+   docker run -d \
+     --name astro-weather-app \
+     --restart unless-stopped \
+     -p 4000:4000 \
+     -e WEATHER_API_KEY=your_api_key \
+     astro-weather-app:amd64
+   ```
+
+### Environment Variables
+
+- `WEATHER_API_KEY`: Required. Get from [WeatherAPI.com](https://www.weatherapi.com/)
+- `PORT`: Optional. Defaults to 4000
+
+### Troubleshooting
+
+#### Container won't start
+
+- Check logs: `docker logs astro-weather-app`
+- Verify API key is set correctly
+- Ensure port 4000 is available
+
+#### Blank page / API errors
+
+- Check browser console for errors
+- Verify backend is running: `curl http://localhost:4000/weather/forecast?lat=45.956&lon=14.659`
+- Check API key is valid
+
+#### Static files not loading
+
+- Verify frontend was built: `ls frontend/dist/`
+- Check backend static file paths in `backend/src/index.ts`
+
+## Project Structure
+
+```
+├── backend/                 # Express.js backend
+│   ├── src/
+│   │   ├── index.ts        # Main server file
+│   │   ├── routes/         # API routes
+│   │   └── utils/          # Backend utilities
+│   ├── package.json
+│   └── tsconfig.json
+├── frontend/               # React frontend
+│   ├── src/
+│   │   ├── components/     # React components
+│   │   ├── utils/          # Frontend utilities
+│   │   └── App.tsx         # Main app component
+│   ├── dist/               # Built frontend (generated)
+│   ├── package.json
+│   └── vite.config.ts
+├── shared/                 # Shared TypeScript schemas
+│   └── schemas/
+│       └── weather.ts
+├── Dockerfile              # Docker configuration
+└── README.md              # This file
+```
+
+## API Endpoints
+
+- `GET /weather/forecast?lat={lat}&lon={lon}` - Get weather forecast
+- `GET /` - Serve frontend application
+- `GET /*` - SPA routing (serves index.html)
+
+## Development Notes
+
+- Frontend uses relative URLs for API calls (works in Docker)
+- Backend serves both API and static frontend files
+- TypeScript paths are resolved at runtime using `tsconfig-paths`
+- Container auto-restarts on failure with `--restart unless-stopped`
+- Weather data refreshes every 3 minutes automatically
+
+## License
+
+MIT License - see LICENSE file for details
